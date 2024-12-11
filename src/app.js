@@ -39,6 +39,27 @@ app.get('/feed',async(req,res) => {
     }
 })
 
+app.delete('/user',async (req,res) => {
+    const userId = req.body?.userId;
+    try{
+        await User.findByIdAndDelete(userId);
+        res.send("User deleted successfully.");
+    }catch(err){
+        res.send("User deletion error.")
+    }
+})
+
+app.patch('/user',async (req,res) => {
+    const data = req.body;
+    const userId = data?.userId;
+    try{
+        await User.findByIdAndUpdate(userId, data);
+        res.send("User updated successfully.");
+    }catch(err){
+        res.send("User updation error.");
+    }
+})
+
 connectDB().then(() => {
     console.log("Databse connection established.");
     app.listen(3000, () => {
