@@ -34,9 +34,8 @@ app.post('/login',async (req,res) => {
         
         const user = await User.findOne({ emailId : emailId });
         console.log("user : ",user);
-        const isPasswordValid = await bcrypt.compare(password,user.password);
-
-        const token = jwt.sign({_id : user._id},"codeNodes@8157");
+        const isPasswordValid = await user.validatePassword(password);
+        const token = await user.generateJWT();
         
         if(!user){
             throw new Error("Invalid credentials");
@@ -64,9 +63,13 @@ app.get('/profile',userAuth, async (req,res) => {
 })
 
 app.post('/sendConnectionRequest',userAuth,  async (req,res) => {
-    const user = req.user;
-    console.log(user.firstName + " send a connection request.");
-    res.send(user.firstName + " send a connection request.");
+    try{
+        const user = req.user;
+        console.log(user.firstName + " send a connection request.");
+        res.send(user.firstName + " send a connection request.");
+    }catch(err){
+        res.send("Something went wrong "+err.message);
+    }
 })
 
 app.get('/user',async(req,res) => {
