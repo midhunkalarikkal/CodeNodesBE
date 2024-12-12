@@ -21,12 +21,12 @@ app.get('/user',async(req,res) => {
     try{
         const user = await User.findOne({ emailId : userEmail });
         if(!user){
-            res.send("User not found.");
+            throw new Error("User not found.")
         }else{
             res.send(user);
         }
     }catch(err){
-        res.send("Something went wrong.");
+        res.send("Something went wrong "+err.message);
     }
 })
 
@@ -52,11 +52,15 @@ app.delete('/user',async (req,res) => {
 app.patch('/user',async (req,res) => {
     const data = req.body;
     const userId = data?.userId;
+    const skills = data?.skills;
     try{
+        if(skills.length > 5){
+            throw new Error("You can add only 5 skills.");
+        }
         await User.findByIdAndUpdate(userId, data);
         res.send("User updated successfully.");
     }catch(err){
-        res.send("User updation error.");
+        res.send("Something went wrong "+err.message);
     }
 })
 

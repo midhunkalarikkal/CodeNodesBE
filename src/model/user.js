@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema({
             if(!["Male","Female","Others"].includes(value)){
                 throw new Error("Gender data is not valid.");
             }
-        }
+        },
+        default : "Male",
     },
     photoUrl : {
         type : String,
@@ -47,12 +48,14 @@ const userSchema = new mongoose.Schema({
     },
     about : {
         type : String,
+        default : "This is a sample text, you can update.",
         minLength : 10,
         maxLength: 100,
         trim : true,
     },
     skills : {
         type : [String],
+        default : ["no skills added"],
     }
 },
 {
