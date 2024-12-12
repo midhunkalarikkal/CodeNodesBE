@@ -12,7 +12,7 @@ app.post('/signup',async(req,res) => {
         await user.save();
         res.send("User saved successfully.");
     }catch(err){
-        res.send("Error saving user in to database."+err.message);
+        res.send("Something went wrong "+err.message);
     }
 })
 
@@ -35,7 +35,7 @@ app.get('/feed',async(req,res) => {
         const users = await User.find();
         res.send(users);
     }catch(err){
-        res.send("Something went wrong.");
+        res.send("Something went wrong "+err.message);
     }
 })
 
@@ -45,7 +45,7 @@ app.delete('/user',async (req,res) => {
         await User.findByIdAndDelete(userId);
         res.send("User deleted successfully.");
     }catch(err){
-        res.send("User deletion error.")
+        res.send("Something went wrong "+err.message);
     }
 })
 
