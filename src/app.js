@@ -5,6 +5,7 @@ const validateSignupData = require('./utils/validate');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const userAuth = require('./middlewares/auth');
 
 const app = express()
 
@@ -52,27 +53,20 @@ app.post('/login',async (req,res) => {
     }
 })
 
-app.get('/profile', async (req,res) => {
+app.get('/profile',userAuth, async (req,res) => {
     try{
-        console.log("/profile");
-        const cookies = req.cookies;
-        const {token} = cookies;
-        if(!token){
-            throw new Error("Invalid token");
-        }
-
-        const decodeToken = jwt.verify(token, "codeNodes@8157")
-        const { _id } = decodeToken;
-        const user = await User.findById(_id);
-        if(!user){
-            throw new Error("User doesn't exist.")
-        }
-        console.log("user : ",user);
-        console.log("decodeToken : ",decodeToken);
-        res.send("User profile");
+        const user = req.user;
+        console.log(user.firstName + "Profile");
+        res.send(user);
     }catch(err){
         res.send("Something went wrong "+err.message);
     }
+})
+
+app.post('/sendConnectionRequest',userAuth,  async (req,res) => {
+    const user = req.user;
+    console.log(user.firstName + " send a connection request.");
+    res.send(user.firstName + " send a connection request.");
 })
 
 app.get('/user',async(req,res) => {
