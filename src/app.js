@@ -12,7 +12,7 @@ app.post('/signup',async(req,res) => {
         await user.save();
         res.send("User saved successfully.");
     }catch(err){
-        res.send("Error saving user in to database.");
+        res.send("Error saving user in to database."+err.message);
     }
 })
 
