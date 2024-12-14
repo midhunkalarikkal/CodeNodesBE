@@ -25,11 +25,9 @@ authRouter.post("/signup", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   try {
-    console.log("/login");
     const { emailId, password } = req.body;
 
     const user = await User.findOne({ emailId: emailId });
-    console.log("user : ", user);
     const isPasswordValid = await user.validatePassword(password);
     const token = await user.generateJWT();
 
@@ -52,7 +50,6 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/logout", (req, res) => {
   try {
-    console.log("logout api");
     res.cookie("token", null, { expires: new Date(Date.now()) });
     res.send("Logout succesfully");
   } catch (err) {

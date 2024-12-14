@@ -25,7 +25,6 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
             return conn.fromUserId;
         }
     });
-    console.log("connections : ",data);
     res.send("Connections");
   } catch (err) {
     res.send("Something went wrong " + err.message);
@@ -41,7 +40,6 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     if (connections.length === 0) {
       throw new Error("No requests found.");
     }
-    console.log("connections : ", connections);
     res.send("conections");
   } catch (err) {
     res.send("Something went wrong " + err.message);
@@ -52,6 +50,8 @@ userRouter.get('/user/feed', userAuth, async (req,res) => {
     try{
         const loggedInUser = req.user;
         const hideUsersFromFeed = new Set();
+        const page = parseInt(req.query.page) || 1;
+        let skip = (page - 1) * 10;
 
         const connections = await connectionRequest.find({
             $or : [
@@ -64,9 +64,7 @@ userRouter.get('/user/feed', userAuth, async (req,res) => {
             hideUsersFromFeed.add(req.toUserId.toString());
         });
 
-        const showInFeed = await user.find({ _id : {$nin : Array.from(hideUsersFromFeed)}}).select("firstName lastName photoUrl about");
-
-        console.log(showInFeed);
+        const showInFeed = await user.find({ _id : {$nin : Array.from(hideUsersFromFeed)}}).select("firstName lastName photoUrl about").skip(skip).limit(10);
 
         res.send("Showing feed");
 

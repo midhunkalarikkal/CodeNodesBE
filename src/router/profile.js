@@ -9,7 +9,6 @@ const bcrypt = require('bcrypt');
 profileRouter.get('/profile',userAuth, async (req,res) => {
     try{
         const user = req.user;
-        console.log(user.firstName + "Profile");
         res.send(user);
     }catch(err){
         res.send("Something went wrong "+err.message);
@@ -18,7 +17,6 @@ profileRouter.get('/profile',userAuth, async (req,res) => {
 
 profileRouter.patch('/profile/edit',userAuth, async (req,res) => {
     try{
-        console.log("profile edit");
         const loggedInUser = req.user;
         const isValid = validateProfileData(req);
         if(!isValid){
@@ -35,7 +33,6 @@ profileRouter.patch('/profile/edit',userAuth, async (req,res) => {
 
 profileRouter.patch('/profile/password', userAuth, async(req,res) => {
     try{
-        console.log("password update");
         const loggedInUser = req.user;
         const { password, newPassword } = req.body;
         const user = await User.findById(loggedInUser._id);
