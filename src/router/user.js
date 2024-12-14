@@ -1,6 +1,7 @@
 const express = require("express");
 const userAuth = require("../middlewares/auth");
 const connectionRequest = require("../model/connectionRequest");
+const user = require("../model/user");
 const userRouter = express.Router();
 
 userRouter.get("/user/connections", userAuth, async (req, res) => {
@@ -44,7 +45,34 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     res.send("conections");
   } catch (err) {
     res.send("Something went wrong " + err.message);
-  }
+}
 });
+
+userRouter.get('/user/feed', userAuth, async (req,res) => {
+    try{
+        const loggedInUser = req.user;
+        const hideUsersFromFeed = new Set();
+
+        const connections = await connectionRequest.find({
+            $or : [
+                { fromUserId : loggedInUser._id}, {toUserId : loggedInUser._id}
+            ]
+        }).select("fromUserId toUserId");
+        
+        connections.forEach((req) => {
+            hideUsersFromFeed.add(req.fromUserId.toString());
+            hideUsersFromFeed.add(req.toUserId.toString());
+        });
+
+        const showInFeed = await user.find({ _id : {$nin : Array.from(hideUsersFromFeed)}}).select("firstName lastName photoUrl about");
+
+        console.log(showInFeed);
+
+        res.send("Showing feed");
+
+    }catch(err){
+        res.send("Something went wrong " + err.message);
+    }
+})
 
 module.exports = userRouter;
